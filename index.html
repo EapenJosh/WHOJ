@@ -108,6 +108,8 @@ h2 { margin: 0; font-weight: 900; font-size: 1.5rem; text-wrap: balance; }
 .mono { font-variant-numeric: tabular-nums; font-weight: 700; }
 .addr { background: var(--surface); border-left: 3px solid var(--accent-fill); padding: 10px 14px; margin-top: 8px; font-weight: 400; line-height: 1.5; }
 .empty { color: var(--muted); padding: 24px 0; }
+.adminlink { color: var(--muted); opacity: .35; text-decoration: none; font-size: .8rem; }
+.adminlink:hover, .adminlink:focus-visible { opacity: 1; }
 .previewbar { position: sticky; top: 0; z-index: 30; background: var(--off); color: var(--bg); font-weight: 900; font-size: .9rem; letter-spacing: .04em; text-align: center; padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .break { margin-top: 24px; display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--off); padding: 14px 16px; }
 .break > div { flex: 1 1 260px; min-width: 0; }
@@ -208,7 +210,7 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 
   <footer>
     <span>Questions this page doesn't answer? Message your RAs or call the duty phone.</span>
-    <span>Created by Joshua Eapen · Last updated October 21, 2026</span>
+    <span>Created by Joshua Eapen · Last updated October 21, 2026 · <a class="adminlink" href="admin.html">Admin</a></span>
   </footer>
 </div>
 
@@ -218,6 +220,9 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 (function () {
   const at = new URLSearchParams(location.search).get("at");
   if (!at || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(at)) return;
+  let ok = false;
+  try { ok = localStorage.getItem("whojAdmin") === "42a03c7096d17d62a3ef7b37940b86a07d4d6b1a069916d1091f759482be7d55"; } catch (e) {}
+  if (!ok) return;   /* only unlocked admins can preview; everyone else sees the real time */
   const RealDate = Date;
   const hourIn = d => new Intl.DateTimeFormat("en-US", { timeZone: "America/Detroit", hour: "numeric", hour12: false }).format(d) % 24;
   let t = new RealDate(at + ":00-04:00");

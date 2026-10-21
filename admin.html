@@ -35,10 +35,28 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .stage { flex: 1; min-height: 0; display: flex; justify-content: center; background: #0a1010; padding: 16px; overflow: auto; }
 iframe { border: 1px solid var(--line); background: var(--bg); width: 100%; height: 100%; min-height: 600px; }
 iframe.phone { width: 400px; max-width: 100%; }
+.gate { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px max(16px, env(safe-area-inset-left, 0px)); }
+.gatebox { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 14px; }
+.gatebox h1 { font-size: 1.8rem; }
+.gatebox input { font: inherit; font-size: 1rem; font-weight: 400; color: var(--fg); background: var(--surface); border: 1px solid var(--line); padding: 10px 12px; text-transform: none; letter-spacing: 0; }
+.err { margin: 0; color: var(--off); font-weight: 700; }
+#app[hidden] { display: none !important; }
 .open { color: var(--accent); font-weight: 700; font-size: .9rem; }
 </style>
 </head>
 <body>
+<main class="gate" id="gate">
+  <form id="gateForm" class="gatebox">
+    <h1>Admin</h1>
+    <label for="pw">Password
+      <input id="pw" type="password" autocomplete="current-password" required>
+    </label>
+    <p class="err" id="err" hidden>That password isn't right. Try again.</p>
+    <button type="submit" class="on">Unlock</button>
+    <a class="open" href="./">← Back to Quick Links</a>
+  </form>
+</main>
+<div id="app" hidden style="display:contents">
 <header>
   <div class="title">
     <h1>Page preview</h1>
@@ -54,10 +72,12 @@ iframe.phone { width: 400px; max-width: 100%; }
       <button type="button" id="deskBtn">Desktop</button>
     </div>
     <button type="button" id="nowBtn">Right now</button>
+    <button type="button" id="lockBtn">Lock</button>
   </div>
   <div class="presets" id="presets"><span class="lbl">Quick checks</span></div>
 </header>
 <div class="stage"><iframe id="frame" class="phone" title="Quick Links preview"></iframe></div>
+</div>
 
 <script src="breaks.js"></script>
 <script>
@@ -97,7 +117,18 @@ const phoneBtn = document.getElementById("phoneBtn"), deskBtn = document.getElem
 phoneBtn.addEventListener("click", () => setSize(true));
 deskBtn.addEventListener("click", () => setSize(false));
 
-load(miNow());
+const KEY = "42a03c7096d17d62a3ef7b37940b86a07d4d6b1a069916d1091f759482be7d55";
+const sha = async t => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map(b => b.toString(16).padStart(2, "0")).join("");
+const getTok = () => { try { return localStorage.getItem("whojAdmin"); } catch (e) { return null; } };
+function unlock() { document.getElementById("gate").hidden = true; document.getElementById("app").hidden = false; load(miNow()); }
+document.getElementById("gateForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const h = await sha(document.getElementById("pw").value);
+  if (h === KEY) { try { localStorage.setItem("whojAdmin", h); } catch (e) {} unlock(); }
+  else { document.getElementById("err").hidden = false; document.getElementById("pw").select(); }
+});
+document.getElementById("lockBtn").addEventListener("click", () => { try { localStorage.removeItem("whojAdmin"); } catch (e) {} location.reload(); });
+if (getTok() === KEY) unlock(); else document.getElementById("pw").focus();
 </script>
 </body>
 </html>
