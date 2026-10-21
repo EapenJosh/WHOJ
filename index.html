@@ -159,12 +159,12 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
     <p class="eyebrow">Who to call</p>
     <div class="callgrid">
       <div class="call duty">
-        <div class="row"><span class="name">WHOJ RA Duty Phone</span><span class="status" id="dutyStatus"></span></div>
-        <span class="num">(616) 889-7920</span>
+        <div class="row"><span class="name" id="dutyName">WHOJ RA Duty Phone</span><span class="status" id="dutyStatus"></span></div>
+        <span class="num" id="dutyNum">(616) 889-7920</span>
         <span class="hrs">Mon → Fri 8pm → 8am. 24 hours Sat and Sun.</span>
         <span class="bnote" id="dutyBreak" hidden></span>
         <span class="hint" id="dutyHint" hidden>Not on right now. Go to the North Campus Desk in HHLC until 8pm. For emergencies, call 911.</span>
-        <div><button class="copy" data-copy="6168897920">Copy</button></div>
+        <div><button class="copy" id="dutyCopy" data-copy="6168897920">Copy</button></div>
       </div>
       <div class="call">
         <span class="name">Emergency</span>
@@ -399,12 +399,22 @@ function setStatus() {
   document.getElementById("dutyHint").hidden = on;
   document.getElementById("deskTag").hidden = on;
   document.getElementById("deskCard").classList.toggle("now", !on);
-  const br = breakOn(miDate(new Date()));
-  const closed = !!(br && br.deskClosed);
-  document.getElementById("deskClosed").hidden = !closed;
+  const today = miDate(new Date());
+  const br = breakOn(today);
+  /* Desk */
+  const closed = !!(br && (br.deskClosed === true || (br.deskClosedDays || []).some(([a, z]) => today >= a && today <= (z || a))));
+  const deskEl = document.getElementById("deskClosed");
+  deskEl.textContent = closed ? "Closed today for break. Call the duty phone." : (br && br.deskNote) || "";
+  deskEl.hidden = !closed && !(br && br.deskNote);
   document.getElementById("deskCard").classList.toggle("closed", closed);
+  /* Duty phone */
+  const alt = br && br.dutyNumber && (!br.dutyNumberUntil || today <= br.dutyNumberUntil);
+  const num = alt ? br.dutyNumber : "(616) 889-7920";
+  document.getElementById("dutyNum").textContent = num;
+  document.getElementById("dutyCopy").dataset.copy = num.replace(/\D/g, "");
+  document.getElementById("dutyName").textContent = alt ? "Break Duty Phone" : "WHOJ RA Duty Phone";
   document.getElementById("dutyBreak").hidden = !br;
-  if (br) document.getElementById("dutyBreak").textContent = `On 24 hours for ${br.name}.`;
+  if (br) document.getElementById("dutyBreak").textContent = alt ? `Use this number for ${br.name}. Answered 24 hours.` : `On 24 hours for ${br.name}.`;
   renderBanner();
 }
 setStatus(); setInterval(setStatus, 60000);
