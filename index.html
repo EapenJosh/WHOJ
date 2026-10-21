@@ -108,6 +108,7 @@ h2 { margin: 0; font-weight: 900; font-size: 1.5rem; text-wrap: balance; }
 .mono { font-variant-numeric: tabular-nums; font-weight: 700; }
 .addr { background: var(--surface); border-left: 3px solid var(--accent-fill); padding: 10px 14px; margin-top: 8px; font-weight: 400; line-height: 1.5; }
 .empty { color: var(--muted); padding: 24px 0; }
+.previewbar { position: sticky; top: 0; z-index: 30; background: var(--off); color: var(--bg); font-weight: 900; font-size: .9rem; letter-spacing: .04em; text-align: center; padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .break { margin-top: 24px; display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--off); padding: 14px 16px; }
 .break > div { flex: 1 1 260px; min-width: 0; }
 .break strong { font-weight: 900; font-size: 1.05rem; }
@@ -212,6 +213,29 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 </div>
 
 <button class="totop" id="totop" type="button" data-show="false" aria-label="Back to top">↑ Top</button>
+<script>
+/* Preview mode: index.html?at=2026-11-26T14:00 shows the page as it looks at that Michigan date and time. Used by admin.html. */
+(function () {
+  const at = new URLSearchParams(location.search).get("at");
+  if (!at || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(at)) return;
+  const RealDate = Date;
+  const hourIn = d => new Intl.DateTimeFormat("en-US", { timeZone: "America/Detroit", hour: "numeric", hour12: false }).format(d) % 24;
+  let t = new RealDate(at + ":00-04:00");
+  if (hourIn(t) !== +at.slice(11, 13)) t = new RealDate(at + ":00-05:00");
+  const T = t.getTime(), start = RealDate.now();
+  class FakeDate extends RealDate {
+    constructor(...a) { super(...(a.length ? a : [T + (RealDate.now() - start)])); }
+    static now() { return T + (RealDate.now() - start); }
+  }
+  window.Date = FakeDate;
+  document.addEventListener("DOMContentLoaded", () => {
+    const bar = document.createElement("div");
+    bar.className = "previewbar";
+    bar.textContent = "Preview: " + t.toLocaleString("en-US", { timeZone: "America/Detroit", weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+    document.body.prepend(bar);
+  });
+})();
+</script>
 <script src="breaks.js"></script>
 <script>
 const S = [
