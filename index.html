@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WHOJ Quick Links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,700;6..12,900&display=swap">
+<style>
+/* Layout: brand-guide spread. Sticky section index on the left, content column on the right, hairline dividers, teal as the only accent. Dark first. */
+:root {
+  --bg: #0e1616;
+  --surface: #142020;
+  --fg: #e4eded;
+  --muted: #8da1a1;
+  --line: #263636;
+  --accent: #94e3e3;
+  --accent-fill: #009494;
+  --deep: #004343;
+  --on-fill: #ffffff;
+  --ok: #6fd39b;
+  --off: #c9a46a;
+  --font: "Nunito Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #ffffff; --surface: #f3f7f7; --fg: #212121; --muted: #5c6a6a; --line: #d8e2e2;
+    --accent: #007878; --accent-fill: #009494; --deep: #004343; --on-fill: #ffffff;
+    --ok: #1d7d4c; --off: #8a5d14; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #ffffff; --surface: #f3f7f7; --fg: #212121; --muted: #5c6a6a; --line: #d8e2e2;
+  --accent: #007878; --accent-fill: #009494; --deep: #004343; --on-fill: #ffffff;
+  --ok: #1d7d4c; --off: #8a5d14; color-scheme: light;
+}
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-weight: 300; font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+b, strong { font-weight: 700; }
+
+/* Header */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.badge { display: inline-block; background: var(--accent-fill); color: var(--on-fill); font-weight: 700; font-size: 13px; letter-spacing: .06em; padding: 4px 10px; margin-bottom: 14px; }
+h1 { margin: 0; font-weight: 900; font-size: clamp(2rem, 6vw, 3.1rem); line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
+.sub { margin: 8px 0 0; color: var(--muted); font-size: 1.05rem; }
+.search { flex: 1 1 280px; max-width: 360px; }
+.search label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.search input { width: 100%; box-sizing: border-box; font: inherit; font-weight: 400; color: var(--fg); background: var(--surface); border: 1px solid var(--line); padding: 12px 14px; border-radius: 0; }
+.search input::placeholder { color: var(--muted); }
+
+/* Call panel */
+.calls { margin-top: 28px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.callgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.call { background: var(--bg); padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.call.duty { background: var(--deep); color: #ffffff; }
+.call .name { font-weight: 700; font-size: .95rem; }
+.call .num { font-weight: 900; font-size: 1.45rem; font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.call .hrs { font-size: .88rem; color: var(--muted); }
+.call.duty .hrs { color: #b8dede; }
+.call .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 700; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status.on { color: #8ff0b8; }
+.status.offline { color: #f0cf96; }
+.copy { font: inherit; font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: transparent; color: inherit; border: 1px solid currentColor; padding: 4px 10px; cursor: pointer; opacity: .85; }
+.copy:hover { opacity: 1; }
+.call:not(.duty) .copy { color: var(--accent); }
+.call.duty { order: -2; }
+.call.now { order: -1; background: var(--accent-fill); color: var(--on-fill); box-shadow: inset 0 0 0 2px var(--accent); }
+.call.now .hrs { color: #e6fafa; }
+.call.now .copy { color: var(--on-fill); }
+.nowtag { align-self: flex-start; font-size: .78rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; background: var(--on-fill); color: var(--deep); padding: 2px 8px; }
+.hint { font-size: .88rem; font-weight: 700; color: #f0cf96; }
+
+/* Main spread */
+.spread { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 48px; margin-top: 44px; }
+.index { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); align-self: start; border-left: 1px solid var(--line); padding-left: 18px; display: flex; flex-direction: column; gap: 10px; }
+.index a { color: var(--muted); text-decoration: none; font-size: .98rem; display: flex; gap: 10px; }
+.index a span { font-variant-numeric: tabular-nums; color: var(--muted); opacity: .7; width: 1.4em; }
+.index a:hover, .index a.active { color: var(--fg); font-weight: 700; }
+.content { display: flex; flex-direction: column; gap: 52px; min-width: 0; }
+section { scroll-margin-top: 24px; }
+.sechead { display: flex; align-items: baseline; gap: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+.sechead .n { background: var(--accent-fill); color: var(--on-fill); font-weight: 700; font-size: 13px; padding: 3px 8px; font-variant-numeric: tabular-nums; }
+h2 { margin: 0; font-weight: 900; font-size: 1.5rem; text-wrap: balance; }
+.items { display: flex; flex-direction: column; }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.item h3 { margin: 0; font-weight: 700; font-size: 1.05rem; grid-column: 1 / -1; }
+.item p { margin: 0; color: var(--fg); max-width: 62ch; }
+.item p + p { margin-top: 6px; }
+.item .muted { color: var(--muted); font-size: .92rem; }
+.links { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding-top: 2px; }
+.links a { font-weight: 700; font-size: .92rem; white-space: nowrap; text-decoration: none; }
+.links a::after { content: " \2192"; }
+.links a:hover { text-decoration: underline; }
+.mono { font-variant-numeric: tabular-nums; font-weight: 700; }
+.addr { background: var(--surface); border-left: 3px solid var(--accent-fill); padding: 10px 14px; margin-top: 8px; font-weight: 400; line-height: 1.5; }
+.empty { color: var(--muted); padding: 24px 0; }
+footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 760px) {
+  .spread { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 32px; }
+  .index { display: none; }
+  .item { grid-template-columns: minmax(0, 1fr); }
+  .links { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 6px 18px; }
+  .search { max-width: none; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+<style>[hidden]{display:none!important} body{margin:0} :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <span class="badge">WEED / HOOBLER / OTT / JOHNSON</span>
+      <h1>WHOJ Quick Links</h1>
+      <p class="sub">The answers residents ask us for most, in one place. From your Hoobler RAs.</p>
+    </div>
+    <div class="search">
+      <label for="q">Search</label>
+      <input id="q" type="search" placeholder="Try &quot;locked out&quot; or &quot;printer&quot;" autocomplete="off">
+    </div>
+  </header>
+
+  <div class="calls">
+    <p class="eyebrow">Who to call</p>
+    <div class="callgrid">
+      <div class="call duty">
+        <div class="row"><span class="name">WHOJ RA Duty Phone</span><span class="status" id="dutyStatus"></span></div>
+        <span class="num">(616) 889-7920</span>
+        <span class="hrs">Mon → Fri 8pm → 8am. 24 hours Sat and Sun.</span>
+        <span class="hint" id="dutyHint" hidden>Not on right now. Go to the North Campus Desk in HHLC until 8pm. For emergencies, call 911.</span>
+        <div><button class="copy" data-copy="6168897920">Copy</button></div>
+      </div>
+      <div class="call">
+        <span class="name">Emergency</span>
+        <span class="num">911</span>
+        <span class="hrs">Always call 911 first in an emergency.</span>
+      </div>
+      <div class="call">
+        <span class="name">GVPD, non emergency</span>
+        <span class="num">(616) 331-3255</span>
+        <span class="hrs">24/7. Also handles after hours facilities emergencies.</span>
+        <div><button class="copy" data-copy="6163313255">Copy</button></div>
+      </div>
+      <div class="call" id="deskCard">
+        <span class="nowtag" id="deskTag" hidden>Go here now</span>
+        <span class="name">North Campus Desk (HHLC)</span>
+        <span class="num">(616) 331-3332</span>
+        <span class="hrs">Mon → Fri 8am → 8pm. Sat and Sun 10am → 6pm. Main lobby of Holton-Hooker.</span>
+        <div><button class="copy" data-copy="6163313332">Copy</button></div>
+      </div>
+      <div class="call">
+        <span class="name">Facilities</span>
+        <span class="num">(616) 331-3000</span>
+        <span class="hrs">Staffed Mon → Fri 7:30am → 6pm. Answered 24/7 for emergencies.</span>
+        <div><button class="copy" data-copy="6163313000">Copy</button></div>
+      </div>
+      <div class="call">
+        <span class="name">Central Housing Office</span>
+        <span class="num">(616) 331-2120</span>
+        <span class="hrs">Mon → Fri 8am → 5pm. 3rd floor of Holton-Hooker.</span>
+        <div><button class="copy" data-copy="6163312120">Copy</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spread">
+    <nav class="index" id="index" aria-label="Sections"></nav>
+    <main class="content" id="content"></main>
+  </div>
+
+  <footer>
+    <span>Questions this page doesn't answer? Message your RAs or call the duty phone.</span>
+    <span>Last updated October 21, 2026</span>
+  </footer>
+</div>
+
+<script>
+const S = [
+  { id: "lockout", title: "Locked out or lost something", items: [
+    { h: "Locked out of your room", p: ["Go to the North Campus Desk in the Holton-Hooker lobby for a temporary key. After the desk closes, call the WHOJ RA Duty Phone."], k: "key lockout locked out door temp" },
+    { h: "Lost your room key", p: ["Report it at the North Campus Desk in Holton-Hooker. Key replacements are requested through your RA."], l: [["Facilities key info", "https://www.gvsu.edu/facilitiesservices/allendale/housing-key-requests-63.htm"]], k: "key lost replacement" },
+    { h: "Lost your GVSU ID", p: ["Replace it at the Cashiers' windows on the first floor of the Student Services Building, across from Starbucks. If your debit card or other cards were lost with it, file a report with GVPD and call your bank."], k: "id card gcard student id lost debit" },
+    { h: "ID won't open the doors", p: ["Take your ID to the Student Services Building (STU), across from Starbucks, to get it fixed or replaced."], k: "id card swipe door not working access" },
+    { h: "Lost and found", p: ["Items found in the residence halls go to the North Campus Desk in Holton-Hooker. Check there first."], k: "lost found item phone wallet" }
+  ]},
+  { id: "mail", title: "Mail and packages", items: [
+    { h: "Your mailing address", p: ["Use this for all mail and packages, including Amazon. Housing emails your GVSU account when it's ready to pick up at the Ravines Center. Bring your GVSU ID."],
+      addr: "Your First and Last Name<br>4310 Ravine Center Dr.<br>Your Building and Room Number<br>Allendale, MI 49401-9414",
+      l: [["Mail and package info", "https://www.gvsu.edu/housing/mail-package-information-9"]], k: "address package amazon shipping mail ravine ravines" },
+    { h: "Food delivery (DoorDash, Grubhub, pizza)", p: ["The Ravines Center does not accept food deliveries. Use your building's street address and meet the driver at the front door."],
+      addr: "Weed: 11086 Residence Dr.<br>Hoobler: 11090 Residence Dr.<br>Ott: 11018 Residence Dr.<br>Johnson: 11012 Residence Dr.<br>Allendale, MI 49401",
+      k: "doordash grubhub ubereats food delivery address pizza" },
+    { h: "Sending a letter", p: ["The Ravines Center can't send mail. Use a USPS mailbox outside the Kirkhof Center (south doors near the buses), Niemeyer, or Laker Village North. Stamps are sold at the Laker Store."], k: "send letter outgoing mail stamps postage usps" }
+  ]},
+  { id: "workorders", title: "Work orders and repairs", items: [
+    { h: "Submit a work order", p: ["For anything broken in your room or building. One work order per issue is enough; your roommate doesn't need to submit one too. Add a photo."], l: [["Work order portal", "https://gvsu.gofmx.com"]], k: "work order maintenance broken repair fix facilities" },
+    { h: "Work order closed but not fixed", p: ["Call Facilities at <span class=\"mono\">(616) 331-3000</span> during business hours with your work order details and ask them to reopen it."], k: "work order not fixed closed status follow up" },
+    { h: "Urgent problems", p: ["Flooding, no heat, or anything unsafe: call Facilities at <span class=\"mono\">(616) 331-3000</span>, answered 24/7, and let the RA on duty know."], k: "emergency flood leak heat water urgent" }
+  ]},
+  { id: "laundry", title: "Laundry", items: [
+    { h: "Laundry is free", p: ["Load the machine, pick your settings, and press start. The WASH app only shows which machines are open. Ignore its add funds message."], k: "laundry washer dryer wash app free funds" },
+    { h: "Broken washer or dryer", p: ["Don't force a locked door open. Submit a WASH service request with the machine number."], l: [["WASH service request", "https://www.wash.com/service-request/"]], k: "washer broken dryer locked wet service request" },
+    { h: "Someone's clothes are still in the machine", p: ["Give them 10 minutes. After that, set their clothes on top of the same machine, not anywhere else."], k: "laundry clothes courtesy" }
+  ]},
+  { id: "wifi", title: "Wi-Fi and devices", items: [
+    { h: "Phones and laptops", p: ["Connect to GV-Student and sign in with your GVSU username and password. Never share your login."], l: [["Getting connected", "https://gvsu.edu/it/getting-connected-students-174.htm"]], k: "wifi internet password laptop phone gv-student connect" },
+    { h: "TVs, consoles, Alexa, and other smart devices", p: ["Register the device's wireless MAC address, then connect it to GV-GameNet (no password). Chromecasts and wireless printers aren't supported."], l: [["Register a gaming device", "https://services.gvsu.edu/TDClient/60/Portal/KB/Article/4634/Registering-a-Gaming-Device-on-GV-GameNet"], ["Register a smart TV", "https://services.gvsu.edu/TDClient/60/Portal/KB/ArticleDet?ID=21111"]], k: "tv roku xbox playstation switch alexa echo smart gamenet mac register" },
+    { h: "Guests' devices", p: ["Guests can connect to GV-Visitor and accept the terms."], k: "guest wifi visitor" },
+    { h: "Still not working", p: ["Contact IT at <span class=\"mono\">(616) 331-2101</span> or it@gvsu.edu, or walk up to the IT desk in the Mary Idema Pew Library, room 010."], l: [["IT help", "https://gvsu.edu/it/ticket"]], k: "it help support blackboard password" }
+  ]},
+  { id: "guests", title: "Guests and parking", items: [
+    { h: "Register a guest", p: ["Register every guest using the form. One guest per resident, your roommate must agree first, you must stay with your guest in the building, and no more than 2 nights in a row."], l: [["Guest registration form", "https://www.gvsu.edu/housing/form/dd730d0f-b67d-4ee1-a3ee-719cd6256beb/response/create"], ["Guest policy", "https://services.gvsu.edu/TDClient/60/Portal/KB/Article/5477/HRL-Guest-Policy"]], k: "guest register visitor overnight policy friend" },
+    { h: "Guest parking", p: ["Visitors can get a free day permit from Parking Services in the Service Building with a photo ID and license plate number, or use pay to park spots. Overnight guests need an overnight permit, which the guest has to pick up in person."], p2: "Arriving after hours? Park in a yellow R resident space and get the permit by 7:30am the next morning. Parking Services: (616) 331-7275.", l: [["Visitor parking", "https://www.gvsu.edu/parking/guest-visitor-parking-102.htm"], ["Overnight guest parking", "https://gvsu.edu/parking/overnight-student-guest-parking-107.htm"]], k: "parking permit visitor overnight lot car ticket" }
+  ]},
+  { id: "dining", title: "Dining", items: [
+    { h: "Hours, menus, and balances", p: ["Meals get you into The Dish and Fresh Food Co. Dining dollars work at the other Laker Food Co. spots like the POD, Starbucks, and Bento. Unused dining dollars roll from fall to winter."], l: [["Laker Food Co.", "https://www.gvsu.edu/food/how-it-works-and-faq-48.htm"]], k: "dining dish fresh meal swipe dining dollars hours menu balance food" },
+    { h: "Food pantry", p: ["Replenish, GVSU's on campus food pantry, is free for students."], l: [["Replenish", "https://www.gvsu.edu/basic/"]], k: "food pantry replenish free groceries" }
+  ]},
+  { id: "printing", title: "Printing", items: [
+    { h: "How to print", p: ["Upload your file to GVPrint, or email it from your GVSU account to gvprint@gvsu.edu. Then release it at any GVPrint station by scanning your ID. Jobs disappear after 24 hours."], l: [["GVPrint upload", "https://gvprint.gvsu.edu/myprintcenter/"], ["Printer locations", "https://www.gvsu.edu/it/gvprint-locations-176.htm"]], k: "print printer printing gvprint library kirkhof" },
+    { h: "Closest printers", p: ["Kirkhof Center lobby, the Mary Idema Pew Library, Manitou Hall 201, Henry Hall 111, and AuSable Hall."], k: "printer location near" }
+  ]},
+  { id: "transit", title: "Getting around", items: [
+    { h: "Buses", p: ["Every GVSU and Rapid bus is free with your GVSU ID. The Laker Line runs between Allendale and the Grand Rapids campuses. Use the Transit or MyStop app to track buses live."], l: [["GVSU bus system", "https://www.gvsu.edu/bus/bus-system-80.htm"]], k: "bus laker line rapid transit mystop downtown grand rapids" },
+    { h: "Safewalk", p: ["A free escort to or from anywhere on campus, any time you'd rather not walk alone."], l: [["Safewalk", "https://www.gvsu.edu/dps/safewalk-program-92.htm"]], k: "safewalk walk escort night safe" },
+    { h: "Laker Guardian app", p: ["Set a check in timer for GVPD, share your location with people you trust, and reach campus safety quickly."], l: [["Laker Guardian", "https://www.gvsu.edu/dps/laker-guardian-129.htm"]], k: "laker guardian app safety" }
+  ]},
+  { id: "living", title: "Living together", items: [
+    { h: "Roommate agreement", p: ["Required for every unit and part of your housing contract. Fill it out together; your RAs can help you through it."], l: [["Roommate agreement form", "https://www.gvsu.edu/housing/form/0e09627a-5278-4971-8100-fa45a7e3beca/response/create"]], k: "roommate agreement conflict" },
+    { h: "Room changes and roommate concerns", p: ["Talk to your RAs first. Room changes go through your Community Director."], k: "room change move roommate problem" },
+    { h: "Building basics", p: ["Quiet hours are 10pm → 10am every day. No electric scooters inside any building. Don't prop exterior doors or let in people you don't recognize. Clean up shared kitchens and lounges after you use them."], k: "quiet hours noise scooter door rules kitchen policy candles" }
+  ]},
+  { id: "support", title: "Support", items: [
+    { h: "University Counseling Center", p: ["Free, confidential counseling. Mon → Fri 8am → 5pm, 206 Student Services Building, or telehealth. <span class=\"mono\">(616) 331-3266</span>."], l: [["UCC", "https://www.gvsu.edu/counsel"], ["Schedule online", "https://www.gvsu.edu/counsel/online-scheduling-312"]], k: "counseling therapy mental health stress ucc talk" },
+    { h: "Victim advocacy", p: ["Free, confidential support after violence, crime, or trauma, with no pressure to report."], l: [["Victim advocacy", "https://www.gvsu.edu/campushealth/victim-survivor-advocacy-37.htm"]], k: "victim advocacy assault crime trauma" },
+    { h: "Bias or discrimination", p: ["File a Campus Climate report to document an incident, even if you don't want action taken."], l: [["Campus Climate report", "https://cm.maxient.com/reportingform.php?GrandValley&layout_id=102"], ["Civil Rights and Title IX", "https://www.gvsu.edu/titleix/"]], k: "bias discrimination racism campus climate title ix report" }
+  ]},
+  { id: "staff", title: "Your housing staff", items: [
+    { h: "Community Director", p: ["Hayley Wilson, Johnson 103. wilshayl@gvsu.edu. Reach out for room changes, roommate concerns, and anything your RAs can't resolve."], k: "cd community director hayley wilson email" },
+    { h: "Hoobler RAs", p: ["Josh, Audrey, and Itzy. Message us on GroupMe or knock on our doors. Weed, Ott, and Johnson residents can reach their own building's RAs the same way, or call the duty phone."], k: "ra resident assistant josh audrey itzy hoobler" }
+  ]}
+];
+
+const content = document.getElementById("content");
+const index = document.getElementById("index");
+const pad = n => String(n).padStart(2, "0");
+
+S.forEach((s, i) => {
+  const a = document.createElement("a");
+  a.href = "#" + s.id;
+  a.innerHTML = `<span>${pad(i + 1)}</span>${s.title}`;
+  index.appendChild(a);
+
+  const sec = document.createElement("section");
+  sec.id = s.id;
+  sec.innerHTML = `<div class="sechead"><span class="n">${pad(i + 1)}</span><h2>${s.title}</h2></div>`;
+  const items = document.createElement("div");
+  items.className = "items";
+  s.items.forEach(it => {
+    const d = document.createElement("div");
+    d.className = "item";
+    d.dataset.k = (s.title + " " + it.h + " " + it.p.join(" ") + " " + (it.p2 || "") + " " + it.k).toLowerCase();
+    const body = it.p.map(t => `<p>${t}</p>`).join("") + (it.p2 ? `<p class="muted">${it.p2}</p>` : "") + (it.addr ? `<div class="addr">${it.addr}</div>` : "");
+    const links = it.l ? `<div class="links">${it.l.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join("")}</div>` : "<div></div>";
+    d.innerHTML = `<h3>${it.h}</h3><div>${body}</div>${links}`;
+    items.appendChild(d);
+  });
+  sec.appendChild(items);
+  content.appendChild(sec);
+});
+const empty = document.createElement("p");
+empty.className = "empty"; empty.hidden = true;
+empty.textContent = "Nothing matches that yet. Try another word, or message your RAs.";
+content.appendChild(empty);
+
+/* Search */
+document.getElementById("q").addEventListener("input", e => {
+  const terms = e.target.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  let any = false;
+  document.querySelectorAll("section").forEach(sec => {
+    let shown = 0;
+    sec.querySelectorAll(".item").forEach(it => {
+      const hit = terms.every(t => it.dataset.k.includes(t));
+      it.hidden = !hit; if (hit) shown++;
+    });
+    sec.hidden = shown === 0; if (shown) any = true;
+  });
+  empty.hidden = any;
+});
+
+/* Duty phone status, Michigan time */
+function dutyLive() {
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Detroit", weekday: "short", hour: "numeric", hour12: false }).formatToParts(new Date());
+  const wd = parts.find(p => p.type === "weekday").value;
+  const hr = parseInt(parts.find(p => p.type === "hour").value, 10) % 24;
+  if (wd === "Sat" || wd === "Sun") return true;
+  if (wd === "Mon" && hr < 8) return true;           /* Sunday's 24 hours run into Monday 8am */
+  return hr >= 20 || hr < 8;
+}
+function setStatus() {
+  const el = document.getElementById("dutyStatus");
+  const on = dutyLive();
+  el.className = "status " + (on ? "on" : "offline");
+  el.textContent = on ? "Monitored now" : "Not monitored now";
+  document.getElementById("dutyHint").hidden = on;
+  document.getElementById("deskTag").hidden = on;
+  document.getElementById("deskCard").classList.toggle("now", !on);
+}
+setStatus(); setInterval(setStatus, 60000);
+
+/* Copy buttons */
+document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
+  const raw = b.dataset.copy, done = () => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1600); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(raw).then(done).catch(() => selectNum(b));
+  } else selectNum(b);
+}));
+function selectNum(b) {
+  const n = b.closest(".call").querySelector(".num");
+  const r = document.createRange(); r.selectNodeContents(n);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+
+/* Active index link */
+const links = [...index.querySelectorAll("a")];
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) links.forEach(a => a.classList.toggle("active", a.hash === "#" + e.target.id));
+}), { rootMargin: "-30% 0px -60% 0px" });
+document.querySelectorAll("section").forEach(s => io.observe(s));
+if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+</script>
+</body>
+</html>
