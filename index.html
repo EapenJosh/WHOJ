@@ -108,6 +108,18 @@ h2 { margin: 0; font-weight: 900; font-size: 1.5rem; text-wrap: balance; }
 .mono { font-variant-numeric: tabular-nums; font-weight: 700; }
 .addr { background: var(--surface); border-left: 3px solid var(--accent-fill); padding: 10px 14px; margin-top: 8px; font-weight: 400; line-height: 1.5; }
 .empty { color: var(--muted); padding: 24px 0; }
+.break { margin-top: 24px; display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--off); padding: 14px 16px; }
+.break > div { flex: 1 1 260px; min-width: 0; }
+.break strong { font-weight: 900; font-size: 1.05rem; }
+.break p { margin: 4px 0 0; color: var(--muted); max-width: 70ch; }
+.btag { background: var(--off); color: var(--bg); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; white-space: nowrap; }
+.bnote { font-size: .88rem; font-weight: 700; color: var(--off); }
+.call.duty .bnote { color: #f0cf96; }
+.call.closed { opacity: .55; }
+.call.closed .nowtag { display: none; }
+.totop { position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: flex; align-items: center; gap: 6px; font: inherit; font-size: .85rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--on-fill); background: var(--accent-fill); border: 0; padding: 10px 14px; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.3); transition: opacity .2s, transform .2s; }
+.totop[data-show="false"] { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.totop:hover { background: var(--deep); }
 .bgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 10px; max-width: 62ch; }
 .bgrid > div { background: var(--surface); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .bname { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
@@ -141,6 +153,8 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
     </div>
   </header>
 
+  <div class="break" id="breakBanner" role="status" hidden></div>
+
   <div class="calls">
     <p class="eyebrow">Who to call</p>
     <div class="callgrid">
@@ -148,6 +162,7 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
         <div class="row"><span class="name">WHOJ RA Duty Phone</span><span class="status" id="dutyStatus"></span></div>
         <span class="num">(616) 889-7920</span>
         <span class="hrs">Mon → Fri 8pm → 8am. 24 hours Sat and Sun.</span>
+        <span class="bnote" id="dutyBreak" hidden></span>
         <span class="hint" id="dutyHint" hidden>Not on right now. Go to the North Campus Desk in HHLC until 8pm. For emergencies, call 911.</span>
         <div><button class="copy" data-copy="6168897920">Copy</button></div>
       </div>
@@ -165,6 +180,7 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
       <div class="call" id="deskCard">
         <span class="nowtag" id="deskTag" hidden>Go here now</span>
         <span class="name">North Campus Desk (HHLC)</span>
+        <span class="bnote" id="deskClosed" hidden>Closed today for break. Call the RA Duty Phone.</span>
         <span class="num">(616) 331-3332</span>
         <span class="hrs">Mon → Fri 8am → 8pm. Sat and Sun 10am → 6pm. Main lobby of Holton-Hooker.</span>
         <div><button class="copy" data-copy="6163313332">Copy</button></div>
@@ -195,6 +211,8 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
   </footer>
 </div>
 
+<button class="totop" id="totop" type="button" data-show="false" aria-label="Back to top">↑ Top</button>
+<script src="breaks.js"></script>
 <script>
 const S = [
   { id: "lockout", title: "Locked out or lost something", items: [
@@ -344,10 +362,31 @@ document.getElementById("q").addEventListener("input", e => {
 });
 
 /* Duty phone status, Michigan time */
+/* Breaks (edited in breaks.js) */
+const BREAKS = Array.isArray(window.BREAKS) ? window.BREAKS : [];
+const miDate = d => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Detroit", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+const shiftDays = (iso, n) => { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const breakOn = iso => BREAKS.find(b => iso >= b.start && iso <= b.end);
+const nice = iso => new Date(iso + "T12:00:00Z").toLocaleDateString("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric" });
+
+function renderBanner() {
+  const today = miDate(new Date());
+  const now = breakOn(today);
+  const soon = now || BREAKS.find(b => b.start > today && b.start <= shiftDays(today, 7));
+  const el = document.getElementById("breakBanner");
+  if (!soon) { el.hidden = true; return; }
+  const range = soon.start === soon.end ? nice(soon.start) : `${nice(soon.start)} → ${nice(soon.end)}`;
+  el.innerHTML = `<span class="btag">${now ? "Happening now" : "Coming up"}</span><div><strong>${soon.name}: ${range}</strong><p>${soon.note || ""}</p></div>`;
+  el.hidden = false;
+}
+
 function dutyLive() {
   const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Detroit", weekday: "short", hour: "numeric", hour12: false }).formatToParts(new Date());
   const wd = parts.find(p => p.type === "weekday").value;
   const hr = parseInt(parts.find(p => p.type === "hour").value, 10) % 24;
+  const today = miDate(new Date());
+  if (breakOn(today)) return true;
+  if (hr < 8 && breakOn(shiftDays(today, -1))) return true;   /* a break day's 24 hours run into 8am the next morning */
   if (wd === "Sat" || wd === "Sun") return true;
   if (wd === "Mon" && hr < 8) return true;           /* Sunday's 24 hours run into Monday 8am */
   return hr >= 20 || hr < 8;
@@ -360,8 +399,25 @@ function setStatus() {
   document.getElementById("dutyHint").hidden = on;
   document.getElementById("deskTag").hidden = on;
   document.getElementById("deskCard").classList.toggle("now", !on);
+  const br = breakOn(miDate(new Date()));
+  const closed = !!(br && br.deskClosed);
+  document.getElementById("deskClosed").hidden = !closed;
+  document.getElementById("deskCard").classList.toggle("closed", closed);
+  document.getElementById("dutyBreak").hidden = !br;
+  if (br) document.getElementById("dutyBreak").textContent = `On 24 hours for ${br.name}.`;
+  renderBanner();
 }
 setStatus(); setInterval(setStatus, 60000);
+
+/* Back to top */
+const toTop = document.getElementById("totop");
+const toggleTop = () => { toTop.dataset.show = window.scrollY > 600 ? "true" : "false"; };
+window.addEventListener("scroll", toggleTop, { passive: true }); toggleTop();
+toTop.addEventListener("click", () => {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  document.getElementById("q").focus({ preventScroll: true });
+});
 
 /* Copy buttons */
 document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
