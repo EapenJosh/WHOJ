@@ -360,7 +360,7 @@ ORDERED.forEach((s, i) => {
     d.dataset.k = (s.title + " " + it.h + " " + it.p.join(" ") + " " + (it.p2 || "") + " " + it.k).toLowerCase();
     const body = it.p.map(t => `<p>${t}</p>`).join("") + (it.p2 ? `<p class="muted">${it.p2}</p>` : "") + (it.addr ? `<div class="addr">${it.addr}</div>` : "") + (it.grid ? `<div class="bgrid">${it.grid.map(([b, v]) => `<div><span class="bname">${b}</span><span class="bval">${v}</span></div>`).join("")}</div>` + (it.gridNote ? `<p class="muted">${it.gridNote}</p>` : "") : "");
     if (it.grid) d.dataset.k += " " + it.grid.flat().join(" ").replace(/<br>/g, " ").toLowerCase();
-    const links = it.l ? `<div class="links">${it.l.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join("")}</div>` : "<div></div>";
+    const links = it.l ? `<div class="links">${it.l.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener" data-goatcounter-click="${s.id}: ${t}" data-goatcounter-title="${t}" data-goatcounter-referrer="">${t}</a>`).join("")}</div>` : "<div></div>";
     d.innerHTML = `<h3>${it.h}</h3><div>${body}</div>${links}`;
     items.appendChild(d);
   });
@@ -447,6 +447,19 @@ function setStatus() {
   renderBanner();
 }
 setStatus(); setInterval(setStatus, 60000);
+
+/* Analytics (GoatCounter: anonymous visit and link click counts, no cookies).
+   Skipped for admin previews and on browsers unlocked as admin, so testing doesn't inflate the numbers. */
+(function () {
+  let admin = false;
+  try { admin = !!localStorage.getItem("whojAdmin"); } catch (e) {}
+  if (admin || new URLSearchParams(location.search).has("at")) return;
+  const gc = document.createElement("script");
+  gc.async = true;
+  gc.src = "https://gc.zgo.at/count.js";
+  gc.dataset.goatcounter = "https://whoj.goatcounter.com/count";
+  document.body.appendChild(gc);
+})();
 
 /* Back to top */
 const toTop = document.getElementById("totop");
