@@ -103,10 +103,14 @@ document.getElementById("nowBtn").addEventListener("click", () => load(miNow()))
 
 const presets = document.getElementById("presets");
 const add = (label, v, cls) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; if (cls) b.className = cls; b.addEventListener("click", () => load(v)); presets.appendChild(b); };
-add("Weekday 2pm (desk open)", nextWeekday(3, "14:00"));
-add("Weekday 9pm (duty phone on)", nextWeekday(3, "21:00"));
-add("Saturday 2pm", nextWeekday(6, "14:00"));
-add("Monday 7am", nextWeekday(1, "07:00"));
+add("Weekday 7:59am (duty phone ending)", nextWeekday(3, "07:59"));
+add("Weekday 8am (desk opens)", nextWeekday(3, "08:00"));
+add("Weekday 7:59pm (desk closing)", nextWeekday(3, "19:59"));
+add("Weekday 8pm (duty phone on)", nextWeekday(3, "20:00"));
+add("Saturday 9am (duty phone, desk not open yet)", nextWeekday(6, "09:00"));
+add("Saturday 10am (desk opens)", nextWeekday(6, "10:00"));
+add("Saturday 6pm (desk closed, duty phone)", nextWeekday(6, "18:00"));
+add("Monday 8am (weekend coverage ends)", nextWeekday(1, "08:00"));
 (window.BREAKS || []).forEach(b => {
   add(`${b.name}: week before`, (() => { const d = new Date(b.start + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 3); return d.toISOString().slice(0, 10) + "T12:00"; })(), "brk");
   add(`${b.name}: first day`, b.start + "T12:00", "brk");
