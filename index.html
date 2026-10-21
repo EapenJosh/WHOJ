@@ -101,6 +101,11 @@ h2 { margin: 0; font-weight: 900; font-size: 1.5rem; text-wrap: balance; }
 .mono { font-variant-numeric: tabular-nums; font-weight: 700; }
 .addr { background: var(--surface); border-left: 3px solid var(--accent-fill); padding: 10px 14px; margin-top: 8px; font-weight: 400; line-height: 1.5; }
 .empty { color: var(--muted); padding: 24px 0; }
+.bgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 10px; max-width: 62ch; }
+.bgrid > div { background: var(--surface); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bname { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.bval { font-weight: 400; line-height: 1.5; }
+.bgrid + .muted { margin-top: 6px; }
 footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 
 @media (max-width: 760px) {
@@ -179,7 +184,7 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 
   <footer>
     <span>Questions this page doesn't answer? Message your RAs or call the duty phone.</span>
-    <span>Last updated October 21, 2026</span>
+    <span>Created by Joshua Eapen · Last updated October 21, 2026</span>
   </footer>
 </div>
 
@@ -187,7 +192,7 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
 const S = [
   { id: "lockout", title: "Locked out or lost something", items: [
     { h: "Locked out of your room", p: ["Go to the North Campus Desk in the Holton-Hooker lobby for a temporary key. After the desk closes, call the WHOJ RA Duty Phone."], k: "key lockout locked out door temp" },
-    { h: "Lost your room key", p: ["Report it at the North Campus Desk in Holton-Hooker. Key replacements are requested through your RA."], l: [["Facilities key info", "https://www.gvsu.edu/facilitiesservices/allendale/housing-key-requests-63.htm"]], k: "key lost replacement" },
+    { h: "Lost your room key", p: ["Go to the North Campus Desk in Holton-Hooker. Replacement keys are only given out there, not by your RA. If the desk is closed, call the WHOJ RA Duty Phone."], k: "key lost replacement" },
     { h: "Lost your GVSU ID", p: ["Replace it at the Cashiers' windows on the first floor of the Student Services Building, across from Starbucks. If your debit card or other cards were lost with it, file a report with GVPD and call your bank."], k: "id card gcard student id lost debit" },
     { h: "ID won't open the doors", p: ["Take your ID to the Student Services Building (STU), across from Starbucks, to get it fixed or replaced."], k: "id card swipe door not working access" },
     { h: "Lost and found", p: ["Items found in the residence halls go to the North Campus Desk in Holton-Hooker. Check there first."], k: "lost found item phone wallet" }
@@ -197,7 +202,7 @@ const S = [
       addr: "Your First and Last Name<br>4310 Ravine Center Dr.<br>Your Building and Room Number<br>Allendale, MI 49401-9414",
       l: [["Mail and package info", "https://www.gvsu.edu/housing/mail-package-information-9"]], k: "address package amazon shipping mail ravine ravines" },
     { h: "Food delivery (DoorDash, Grubhub, pizza)", p: ["The Ravines Center does not accept food deliveries. Use your building's street address and meet the driver at the front door."],
-      addr: "Weed: 11086 Residence Dr.<br>Hoobler: 11090 Residence Dr.<br>Ott: 11018 Residence Dr.<br>Johnson: 11012 Residence Dr.<br>Allendale, MI 49401",
+      grid: [["Weed", "11086 Residence Dr."], ["Hoobler", "11090 Residence Dr."], ["Ott", "11018 Residence Dr."], ["Johnson", "11012 Residence Dr."]], gridNote: "All in Allendale, MI 49401",
       k: "doordash grubhub ubereats food delivery address pizza" },
     { h: "Sending a letter", p: ["The Ravines Center can't send mail. Use a USPS mailbox outside the Kirkhof Center (south doors near the buses), Niemeyer, or Laker Village North. Stamps are sold at the Laker Store."], k: "send letter outgoing mail stamps postage usps" }
   ]},
@@ -209,21 +214,22 @@ const S = [
   { id: "laundry", title: "Laundry", items: [
     { h: "Laundry is free", p: ["Load the machine, pick your settings, and press start. The WASH app only shows which machines are open. Ignore its add funds message."], k: "laundry washer dryer wash app free funds" },
     { h: "Broken washer or dryer", p: ["Don't force a locked door open. Submit a WASH service request with the machine number."], l: [["WASH service request", "https://www.wash.com/service-request/"]], k: "washer broken dryer locked wet service request" },
-    { h: "Someone's clothes are still in the machine", p: ["Give them 10 minutes. After that, set their clothes on top of the same machine, not anywhere else."], k: "laundry clothes courtesy" }
+    { h: "Someone's clothes are still in the machine", p: ["Wait 15 minutes. After that, you can move their clothes. No need to message the group chat first."], k: "laundry clothes courtesy move 15 minutes" }
   ]},
   { id: "wifi", title: "Wi-Fi and devices", items: [
     { h: "Phones and laptops", p: ["Connect to GV-Student and sign in with your GVSU username and password. Never share your login."], l: [["Getting connected", "https://gvsu.edu/it/getting-connected-students-174.htm"]], k: "wifi internet password laptop phone gv-student connect" },
-    { h: "TVs, consoles, Alexa, and other smart devices", p: ["Register the device's wireless MAC address, then connect it to GV-GameNet (no password). Chromecasts and wireless printers aren't supported."], l: [["Register a gaming device", "https://services.gvsu.edu/TDClient/60/Portal/KB/Article/4634/Registering-a-Gaming-Device-on-GV-GameNet"], ["Register a smart TV", "https://services.gvsu.edu/TDClient/60/Portal/KB/ArticleDet?ID=21111"]], k: "tv roku xbox playstation switch alexa echo smart gamenet mac register" },
+    { h: "TVs, consoles, Alexa, and other smart devices", p: ["Register the device's wireless MAC address, then connect it to GV-GameNet (no password). Chromecasts and wireless printers aren't supported."], l: [["Register a device", "https://services.gvsu.edu/TDClient/60/Portal/Requests/ServiceOfferingDet?ID=2338"], ["Step by step guide", "https://services.gvsu.edu/TDClient/60/Portal/KB/ArticleDet?ID=4634"], ["Smart TV guide", "https://services.gvsu.edu/TDClient/60/Portal/KB/ArticleDet?ID=21111"]], p2: "The registration form asks you to sign in with your GVSU account.", k: "tv roku xbox playstation switch alexa echo smart gamenet mac register" },
     { h: "Guests' devices", p: ["Guests can connect to GV-Visitor and accept the terms."], k: "guest wifi visitor" },
     { h: "Still not working", p: ["Contact IT at <span class=\"mono\">(616) 331-2101</span> or it@gvsu.edu, or walk up to the IT desk in the Mary Idema Pew Library, room 010."], l: [["IT help", "https://gvsu.edu/it/ticket"]], k: "it help support blackboard password" }
   ]},
   { id: "guests", title: "Guests and parking", items: [
+    { h: "Weekend campus access, 10pm → 5am", p: ["Thursday, Friday, and Saturday nights from 10pm → 5am, only GVSU students, faculty, staff, contractors, and pre-registered guests can come onto the Allendale campus. Drivers must use the arch entrance off Lake Michigan Drive, where security checks IDs.", "Register guests by 5pm the day before they visit, and keep your GVSU ID on you. After 10pm, gatherings in common areas are limited to 10 people."], l: [["Guest registration form", "https://www.gvsu.edu/housing/form/dd730d0f-b67d-4ee1-a3ee-719cd6256beb/response/create"]], k: "curfew lockdown 10pm weekend arch entrance access security guest visitor thursday friday saturday gathering" },
     { h: "Register a guest", p: ["Register every guest using the form. One guest per resident, your roommate must agree first, you must stay with your guest in the building, and no more than 2 nights in a row."], l: [["Guest registration form", "https://www.gvsu.edu/housing/form/dd730d0f-b67d-4ee1-a3ee-719cd6256beb/response/create"], ["Guest policy", "https://services.gvsu.edu/TDClient/60/Portal/KB/Article/5477/HRL-Guest-Policy"]], k: "guest register visitor overnight policy friend" },
     { h: "Guest parking", p: ["Visitors can get a free day permit from Parking Services in the Service Building with a photo ID and license plate number, or use pay to park spots. Overnight guests need an overnight permit, which the guest has to pick up in person."], p2: "Arriving after hours? Park in a yellow R resident space and get the permit by 7:30am the next morning. Parking Services: (616) 331-7275.", l: [["Visitor parking", "https://www.gvsu.edu/parking/guest-visitor-parking-102.htm"], ["Overnight guest parking", "https://gvsu.edu/parking/overnight-student-guest-parking-107.htm"]], k: "parking permit visitor overnight lot car ticket" }
   ]},
   { id: "dining", title: "Dining", items: [
     { h: "Hours, menus, and balances", p: ["Meals get you into The Dish and Fresh Food Co. Dining dollars work at the other Laker Food Co. spots like the POD, Starbucks, and Bento. Unused dining dollars roll from fall to winter."], l: [["Laker Food Co.", "https://www.gvsu.edu/food/how-it-works-and-faq-48.htm"]], k: "dining dish fresh meal swipe dining dollars hours menu balance food" },
-    { h: "Food pantry", p: ["Replenish, GVSU's on campus food pantry, is free for students."], l: [["Replenish", "https://www.gvsu.edu/basic/"]], k: "food pantry replenish free groceries" }
+    { h: "Food pantry", p: ["Replenish, GVSU's on campus food pantry, is free for students."], l: [["Replenish", "https://www.gvsu.edu/replenish/"]], k: "food pantry replenish free groceries" }
   ]},
   { id: "printing", title: "Printing", items: [
     { h: "How to print", p: ["Upload your file to GVPrint, or email it from your GVSU account to gvprint@gvsu.edu. Then release it at any GVPrint station by scanning your ID. Jobs disappear after 24 hours."], l: [["GVPrint upload", "https://gvprint.gvsu.edu/myprintcenter/"], ["Printer locations", "https://www.gvsu.edu/it/gvprint-locations-176.htm"]], k: "print printer printing gvprint library kirkhof" },
@@ -239,14 +245,21 @@ const S = [
     { h: "Room changes and roommate concerns", p: ["Talk to your RAs first. Room changes go through your Community Director."], k: "room change move roommate problem" },
     { h: "Building basics", p: ["Quiet hours are 10pm → 10am every day. No electric scooters inside any building. Don't prop exterior doors or let in people you don't recognize. Clean up shared kitchens and lounges after you use them."], k: "quiet hours noise scooter door rules kitchen policy candles" }
   ]},
-  { id: "support", title: "Support", items: [
-    { h: "University Counseling Center", p: ["Free, confidential counseling. Mon → Fri 8am → 5pm, 206 Student Services Building, or telehealth. <span class=\"mono\">(616) 331-3266</span>."], l: [["UCC", "https://www.gvsu.edu/counsel"], ["Schedule online", "https://www.gvsu.edu/counsel/online-scheduling-312"]], k: "counseling therapy mental health stress ucc talk" },
-    { h: "Victim advocacy", p: ["Free, confidential support after violence, crime, or trauma, with no pressure to report."], l: [["Victim advocacy", "https://www.gvsu.edu/campushealth/victim-survivor-advocacy-37.htm"]], k: "victim advocacy assault crime trauma" },
-    { h: "Bias or discrimination", p: ["File a Campus Climate report to document an incident, even if you don't want action taken."], l: [["Campus Climate report", "https://cm.maxient.com/reportingform.php?GrandValley&layout_id=102"], ["Civil Rights and Title IX", "https://www.gvsu.edu/titleix/"]], k: "bias discrimination racism campus climate title ix report" }
+  { id: "support", title: "Support and campus resources", items: [
+    { h: "In an emergency", p: ["Call 911. Don't call the RA duty phone first in an emergency."], k: "emergency 911 danger police fire medical" },
+    { h: "Urgent or crisis support", p: ["University Counseling Center: <span class=\"mono\">(616) 331-3266</span>. Same day urgent consultations at 11am and 3pm, Mon → Fri, 206 Student Services Building.", "Call or text <span class=\"mono\">988</span> any time, day or night. After hours, you can also call the WHOJ RA Duty Phone."], l: [["Counseling Center", "https://www.gvsu.edu/counsel"], ["Urgent support", "https://www.gvsu.edu/counsel/emergency-services-100.htm"]], k: "counseling crisis urgent mental health stress ucc 988 suicide talk therapy" },
+    { h: "Worried about someone", p: ["Submit a CARE referral and the CARE Team will reach out to them. It covers wellbeing, personal distress, and resource needs like food or housing. Referrals are read Mon → Fri 8am → 5pm, so call 911 for any immediate safety risk."], l: [["CARE referral", "https://cm.maxient.com/reportingform.php?GrandValley&layout_id=2"], ["About the CARE Team", "https://www.gvsu.edu/care"]], k: "care team referral worried friend concern roommate" },
+    { h: "Health and wellbeing", p: ["Campus health care, wellness coaching, and confidential victim advocacy after violence, crime, or trauma, with no pressure to report."], l: [["Center for Health and Wellbeing", "https://www.gvsu.edu/campushealth/"], ["Victim advocacy", "https://www.gvsu.edu/campushealth/victim-survivor-advocacy-37.htm"], ["Wellness coaching", "https://www.gvsu.edu/studentwellness/wellness-coaching-61.htm"]], k: "health doctor sick wellness victim advocacy assault trauma" },
+    { h: "Basic needs", p: ["Free food, meal swipes, laptops, and emergency financial help when money gets tight."], l: [["Basic needs at GVSU", "https://www.gvsu.edu/basic/"], ["Laker Meal Share", "https://www.gvsu.edu/basic/laker-meal-share-program-15.htm"], ["Financial hardship help", "https://www.gvsu.edu/financialaid/financial-hardship-requests-226.htm"]], k: "basic needs food money laptop hardship meal share pantry" },
+    { h: "Academic support", p: ["Study help, tutoring, advising, and accommodations."], l: [["Academic Success Center", "https://www.gvsu.edu/sasc/"], ["Tutoring", "https://www.gvsu.edu/trc/"], ["Accessibility Resources", "https://www.gvsu.edu/accessibility/"]], k: "academic tutoring study advising accommodations disability sasc" },
+    { h: "Bias or discrimination", p: ["File a Campus Climate report to document an incident, even if you don't want action taken."], l: [["Campus Climate report", "https://cm.maxient.com/reportingform.php?GrandValley&layout_id=102"], ["Civil Rights and Title IX", "https://www.gvsu.edu/titleix/"]], k: "bias discrimination racism campus climate title ix report" },
+    { h: "Every campus resource", p: ["GVSU's full list of support across basic needs, academics, wellness, safety, and finances."], l: [["Campus resources", "https://www.gvsu.edu/care/campus-resources-15.htm"]], k: "resources all campus support list" }
   ]},
   { id: "staff", title: "Your housing staff", items: [
-    { h: "Community Director", p: ["Hayley Wilson, Johnson 103. wilshayl@gvsu.edu. Reach out for room changes, roommate concerns, and anything your RAs can't resolve."], k: "cd community director hayley wilson email" },
-    { h: "Hoobler RAs", p: ["Josh, Audrey, and Itzy. Message us on GroupMe or knock on our doors. Weed, Ott, and Johnson residents can reach their own building's RAs the same way, or call the duty phone."], k: "ra resident assistant josh audrey itzy hoobler" }
+    { h: "Community Director", p: ["Hayley Wilson. Office in Johnson Living Center 103. wilshayl@gvsu.edu. Reach out for room changes, roommate concerns, and anything your RAs can't resolve."], k: "cd community director hayley wilson email johnson office" },
+    { h: "WHOJ Resident Assistants", p: ["Message your RAs on GroupMe or knock on their doors. After hours, call the WHOJ RA Duty Phone."],
+      grid: [["Weed", "Riley Bronikowski<br>Saroj Tamang<br>Saviee Zavala"], ["Hoobler", "Audrey Kneal<br>Itzelh Ruiz-Flores<br>Joshua Eapen"], ["Ott", "Mallory Carr<br>Kayla Finley<br>Larissa Roy"], ["Johnson", "Grayson Rodgers<br>Jamar Williams<br>Riley Moritz"]],
+      k: "ra resident assistant weed hoobler ott johnson riley bronikowski saroj tamang saviee zavala audrey kneal itzelh itzy ruiz-flores joshua josh eapen mallory carr kayla finley larissa roy grayson rodgers jamar williams riley moritz" }
   ]}
 ];
 
@@ -269,7 +282,8 @@ S.forEach((s, i) => {
     const d = document.createElement("div");
     d.className = "item";
     d.dataset.k = (s.title + " " + it.h + " " + it.p.join(" ") + " " + (it.p2 || "") + " " + it.k).toLowerCase();
-    const body = it.p.map(t => `<p>${t}</p>`).join("") + (it.p2 ? `<p class="muted">${it.p2}</p>` : "") + (it.addr ? `<div class="addr">${it.addr}</div>` : "");
+    const body = it.p.map(t => `<p>${t}</p>`).join("") + (it.p2 ? `<p class="muted">${it.p2}</p>` : "") + (it.addr ? `<div class="addr">${it.addr}</div>` : "") + (it.grid ? `<div class="bgrid">${it.grid.map(([b, v]) => `<div><span class="bname">${b}</span><span class="bval">${v}</span></div>`).join("")}</div>` + (it.gridNote ? `<p class="muted">${it.gridNote}</p>` : "") : "");
+    if (it.grid) d.dataset.k += " " + it.grid.flat().join(" ").replace(/<br>/g, " ").toLowerCase();
     const links = it.l ? `<div class="links">${it.l.map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join("")}</div>` : "<div></div>";
     d.innerHTML = `<h3>${it.h}</h3><div>${body}</div>${links}`;
     items.appendChild(d);
